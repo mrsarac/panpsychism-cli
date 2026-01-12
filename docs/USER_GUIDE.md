@@ -78,13 +78,13 @@ index_file: ./data/prompts.mv2
 #============================================================================
 
 # LLM provider endpoint (OpenAI-compatible)
-llm_endpoint: http://127.0.0.1:8045/v1/chat/completions
+llm_endpoint: https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 
 # API key for authentication
-llm_api_key: sk-antigravity
+llm_api_key: ${GEMINI_API_KEY}
 
 # Model to use
-llm_model: gemini-3-flash
+llm_model: gemini-2.0-flash
 
 # Request timeout in seconds
 llm_timeout: 30
@@ -176,7 +176,6 @@ Environment variables override configuration file values:
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `OPENAI_API_KEY` | OpenAI API key |
 | `ANTHROPIC_API_KEY` | Anthropic API key |
-| `ANTIGRAVITY_API_KEY` | Antigravity proxy key |
 | `OLLAMA_ENDPOINT` | Ollama server URL |
 
 ---
@@ -342,18 +341,16 @@ panpsychism search "kubernetes" -v
 
 Panpsychism supports multiple LLM providers through a unified interface:
 
-#### 1. Antigravity Proxy (Free)
+#### 1. Gemini API
 
 ```yaml
-llm_endpoint: http://127.0.0.1:8045/v1/chat/completions
-llm_api_key: sk-antigravity
-llm_model: gemini-3-flash
+llm_endpoint: https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
+llm_api_key: ${GEMINI_API_KEY}
+llm_model: gemini-2.0-flash
 ```
 
 Setup:
 ```bash
-brew tap lbjlaq/antigravity-manager
-brew install --cask --no-quarantine antigravity-tools
 # Start from menu bar, login with Google
 ```
 
@@ -397,7 +394,7 @@ The system includes an intelligent router for multiple providers:
 llm_routing:
   strategy: cost_optimized  # primary, load_balance, cost_optimized, quality
   fallback_chain:
-    - gemini-3-flash      # Try this first
+    - gemini-2.0-flash      # Try this first
     - gpt-4o-mini         # Fallback 1
     - llama3.2            # Fallback 2 (local)
 ```

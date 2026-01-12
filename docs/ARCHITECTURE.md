@@ -380,7 +380,6 @@ pub enum LLMProvider {
         model: String,
         endpoint: String,
     },
-    Antigravity {
         endpoint: String,
     },
     Custom {

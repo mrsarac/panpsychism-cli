@@ -45,7 +45,7 @@ cargo install panpsychism
 ### Requirements
 
 - Rust 1.70 or later
-- A Gemini API key (or Antigravity proxy for local development)
+- A Gemini API key (get one at https://aistudio.google.com/apikey)
 
 ## Quick Start
 
@@ -165,9 +165,9 @@ Configuration file location:
 prompts_dir: ./prompts
 data_dir: ./data
 index_file: ./data/masters.mv2
-llm_endpoint: http://127.0.0.1:8045/v1/chat/completions
-llm_api_key: sk-antigravity
-llm_model: gemini-3-flash
+llm_endpoint: https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
+llm_api_key: ${GEMINI_API_KEY}
+llm_model: gemini-2.0-flash
 privacy:
   tier: local
   share_patterns: false
@@ -179,8 +179,7 @@ privacy:
 
 | Variable | Description |
 |----------|-------------|
-| `GEMINI_API_KEY` | API key for Gemini (primary) |
-| `ANTIGRAVITY_API_KEY` | API key for Antigravity proxy (fallback) |
+| `GEMINI_API_KEY` | API key for Gemini (required for `ask` command) |
 | `RUST_LOG` | Log level (error, warn, info, debug, trace) |
 
 ## Prompt Format

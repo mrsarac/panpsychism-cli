@@ -617,7 +617,6 @@ Goodbye!
 | `GEMINI_API_KEY` | Gemini API key | - |
 | `OPENAI_API_KEY` | OpenAI API key | - |
 | `ANTHROPIC_API_KEY` | Anthropic API key | - |
-| `ANTIGRAVITY_API_KEY` | Antigravity proxy key | `sk-antigravity` |
 | `RUST_LOG` | Rust logging directive | - |
 
 ---

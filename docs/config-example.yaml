@@ -8,10 +8,11 @@ prompts_dir: ./prompts
 data_dir: ./data
 index_file: ./data/masters.mv2
 
-# LLM Configuration (Antigravity Proxy default)
-llm_endpoint: http://127.0.0.1:8045/v1/chat/completions
-llm_api_key: sk-antigravity
-llm_model: gemini-3-flash
+# LLM Configuration (Gemini API)
+# Get your API key at: https://aistudio.google.com/apikey
+llm_endpoint: https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
+llm_api_key: ${GEMINI_API_KEY}
+llm_model: gemini-2.0-flash
 
 # Privacy Configuration
 privacy:
