@@ -1,0 +1,302 @@
+# =============================================================================
+# CODE COMPLEXITY ANALYSIS
+# =============================================================================
+# Analyze code complexity metrics and provide improvement recommendations
+# Version: 1.0.0 | Category: analysis
+# =============================================================================
+
+id: code-complexity-v1
+name: "Code Complexity Analyzer"
+version: "1.0.0"
+category: analysis
+tags: [code-quality, complexity, cyclomatic, cognitive, refactoring, metrics]
+
+description: |
+  Analyzes code complexity using multiple metrics (cyclomatic, cognitive,
+  Halstead, maintainability index) and provides actionable refactoring
+  recommendations to improve code quality and maintainability.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - complexity
+    - cyclomatic
+    - cognitive complexity
+    - code quality
+    - maintainability
+    - technical debt
+    - refactor
+    - code smell
+    - clean code
+
+  patterns:
+    - "\\b(analyze|measure|check)\\b.*\\b(complexity|quality)\\b"
+    - "\\b(cyclomatic|cognitive)\\b.*\\b(complexity|score)\\b"
+    - "\\b(code)\\b.*\\b(smell|debt|maintainability)\\b"
+    - "\\b(simplify|reduce complexity)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a code quality expert specializing in complexity analysis, static code analysis,
+  and software maintainability. You evaluate code using industry-standard metrics and
+  provide concrete refactoring suggestions.
+
+  ## Complexity Metrics You Analyze
+
+  ### 1. Cyclomatic Complexity (CC)
+  - Measures independent paths through code
+  - Formula: E - N + 2P (edges - nodes + 2*connected components)
+  - Thresholds: 1-10 (good), 11-20 (moderate), 21-50 (high), 50+ (untestable)
+
+  ### 2. Cognitive Complexity
+  - Measures how difficult code is to understand
+  - Accounts for nesting, breaks in flow, recursion
+  - Lower is better (aim for <15 per function)
+
+  ### 3. Halstead Metrics
+  - Volume: N * log2(n) where N=total operators+operands, n=unique
+  - Difficulty: (n1/2) * (N2/n2)
+  - Effort: Difficulty * Volume
+
+  ### 4. Maintainability Index
+  - Scale: 0-100 (higher is better)
+  - Formula: 171 - 5.2*ln(V) - 0.23*CC - 16.2*ln(LOC)
+  - Thresholds: 0-9 (poor), 10-19 (moderate), 20+ (good)
+
+  ## Analysis Process
+  1. Parse and understand the code structure
+  2. Calculate complexity metrics for each function/method
+  3. Identify hotspots (high complexity areas)
+  4. Detect code smells related to complexity
+  5. Provide specific refactoring recommendations
+  6. Estimate effort reduction after refactoring
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # Code Complexity Analysis Report
+
+  **File/Module:** {{file_name}}
+  **Language:** {{language}}
+  **Analysis Date:** {{date}}
+
+  ---
+
+  ## Summary Score Card
+
+  | Metric | Value | Rating | Target |
+  |--------|-------|--------|--------|
+  | Cyclomatic Complexity | {{cc_avg}} | {{cc_rating}} | <10 |
+  | Cognitive Complexity | {{cog_avg}} | {{cog_rating}} | <15 |
+  | Maintainability Index | {{mi_score}} | {{mi_rating}} | >20 |
+  | Lines of Code | {{loc}} | - | - |
+  | Functions/Methods | {{func_count}} | - | - |
+
+  **Overall Health:** {{health_emoji}} {{health_status}}
+
+  ---
+
+  ## Function-Level Analysis
+
+  ### High Complexity Functions (Action Required)
+
+  | Function | CC | Cognitive | LOC | Issue |
+  |----------|-----|-----------|-----|-------|
+  {{high_complexity_table}}
+
+  ### Moderate Complexity (Review Recommended)
+
+  {{moderate_complexity_table}}
+
+  ---
+
+  ## Code Smells Detected
+
+  {{code_smells_list}}
+
+  ---
+
+  ## Refactoring Recommendations
+
+  ### Priority 1: {{refactor_1_title}}
+
+  **Location:** {{refactor_1_location}}
+  **Current Complexity:** {{refactor_1_current}}
+  **Target Complexity:** {{refactor_1_target}}
+
+  **Problem:**
+  {{refactor_1_problem}}
+
+  **Solution:**
+  {{refactor_1_solution}}
+
+  **Before:**
+  ```{{language}}
+  {{refactor_1_before}}
+  ```
+
+  **After:**
+  ```{{language}}
+  {{refactor_1_after}}
+  ```
+
+  **Estimated Improvement:** {{refactor_1_improvement}}
+
+  ---
+
+  ## Metrics Trend (if historical data available)
+
+  {{metrics_trend}}
+
+  ---
+
+  ## Action Items
+
+  - [ ] {{action_1}}
+  - [ ] {{action_2}}
+  - [ ] {{action_3}}
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: code_input
+    type: string
+    required: true
+    description: "The code to analyze (function, class, or file)"
+  - name: language
+    type: enum
+    options: [javascript, typescript, python, java, go, rust, csharp, ruby]
+    default: typescript
+    description: "Programming language of the code"
+  - name: analysis_depth
+    type: enum
+    options: [quick, standard, deep]
+    default: standard
+    description: "Depth of analysis"
+  - name: include_refactoring
+    type: boolean
+    default: true
+    description: "Include specific refactoring suggestions with code"
+  - name: threshold_cc
+    type: number
+    default: 10
+    description: "Cyclomatic complexity threshold for warnings"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: |
+      Analyze this function:
+      ```javascript
+      function processOrder(order, user, inventory) {
+        if (order && order.items && order.items.length > 0) {
+          if (user && user.isActive) {
+            if (user.balance >= order.total) {
+              for (let item of order.items) {
+                if (inventory[item.id] && inventory[item.id] >= item.quantity) {
+                  inventory[item.id] -= item.quantity;
+                  if (item.isGift) {
+                    sendGiftNotification(item, order.giftRecipient);
+                  }
+                } else {
+                  return { success: false, error: 'Insufficient inventory' };
+                }
+              }
+              user.balance -= order.total;
+              return { success: true, orderId: generateOrderId() };
+            } else {
+              return { success: false, error: 'Insufficient balance' };
+            }
+          } else {
+            return { success: false, error: 'User not active' };
+          }
+        }
+        return { success: false, error: 'Invalid order' };
+      }
+      ```
+    expected_output: |
+      # Code Complexity Analysis Report
+
+      **File/Module:** processOrder function
+      **Language:** JavaScript
+
+      ---
+
+      ## Summary Score Card
+
+      | Metric | Value | Rating | Target |
+      |--------|-------|--------|--------|
+      | Cyclomatic Complexity | 9 | Warning | <10 |
+      | Cognitive Complexity | 18 | High | <15 |
+      | Maintainability Index | 45 | Moderate | >20 |
+      | Lines of Code | 25 | - | - |
+
+      **Overall Health:** Warning - Refactoring Recommended
+
+      ---
+
+      ## Code Smells Detected
+
+      1. **Arrow Anti-Pattern** - Deep nesting (4 levels) makes code hard to follow
+      2. **Multiple Return Paths** - 5 different return statements
+      3. **Mixed Concerns** - Function handles validation, inventory, balance, and notifications
+      4. **Guard Clause Opportunity** - Early returns can flatten structure
+
+      ---
+
+      ## Refactoring Recommendations
+
+      ### Priority 1: Extract Validation & Use Guard Clauses
+
+      **Current CC:** 9 | **Target CC:** 3
+      **Current Cognitive:** 18 | **Target Cognitive:** 6
+
+      **Solution:** Extract validation, use early returns, and separate concerns
+
+      **After:**
+      ```javascript
+      function processOrder(order, user, inventory) {
+        const validationError = validateOrder(order, user);
+        if (validationError) return { success: false, error: validationError };
+
+        const inventoryError = reserveInventory(order.items, inventory);
+        if (inventoryError) return { success: false, error: inventoryError };
+
+        user.balance -= order.total;
+        processGiftItems(order);
+
+        return { success: true, orderId: generateOrderId() };
+      }
+
+      function validateOrder(order, user) {
+        if (!order?.items?.length) return 'Invalid order';
+        if (!user?.isActive) return 'User not active';
+        if (user.balance < order.total) return 'Insufficient balance';
+        return null;
+      }
+      ```
+
+      **Estimated Improvement:** 67% reduction in cognitive complexity
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.94
+  compatible_agents:
+    - code-reviewer
+    - quality-analyst
+    - refactoring-assistant

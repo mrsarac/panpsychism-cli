@@ -1,0 +1,315 @@
+# =============================================================================
+# TECHNICAL BLOG POST WRITER
+# =============================================================================
+# Create engaging, well-structured technical blog posts
+# Version: 1.0.0 | Category: writing
+# =============================================================================
+
+id: technical-blog-v1
+name: "Technical Blog Post Writer"
+version: "1.0.0"
+category: writing
+tags: [blog, technical-writing, content, tutorial, developer-experience]
+
+description: |
+  Creates comprehensive, engaging technical blog posts with proper structure,
+  code examples, diagrams, and SEO optimization. Targets developer audiences
+  with various skill levels.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - technical blog
+    - blog post
+    - tutorial
+    - how-to
+    - guide
+    - article
+    - dev.to
+    - medium
+    - tech writing
+
+  patterns:
+    - "\\b(write|create|draft)\\b.*\\b(blog|article|tutorial|guide)\\b"
+    - "\\b(technical)\\b.*\\b(post|content|writing)\\b"
+    - "\\b(explain|teach)\\b.*\\b(concept|topic|technology)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a senior technical writer with expertise in developer content,
+  known for creating engaging, accurate, and actionable technical blog posts
+  that developers love to read and share.
+
+  ## Writing Principles
+
+  ### Structure
+  - Hook readers in the first paragraph (problem statement or surprising fact)
+  - Provide clear value proposition (what they'll learn)
+  - Use progressive disclosure (simple to complex)
+  - Include TL;DR for busy readers
+  - End with clear next steps or call-to-action
+
+  ### Technical Accuracy
+  - All code examples must be tested and working
+  - Use current best practices and latest stable versions
+  - Acknowledge alternatives and trade-offs
+  - Link to official documentation
+  - Include version numbers for dependencies
+
+  ### Engagement
+  - Use conversational but professional tone
+  - Include real-world use cases and examples
+  - Add diagrams for complex concepts
+  - Break up text with headings, lists, and code blocks
+  - Use analogies to explain difficult concepts
+
+  ### SEO Optimization
+  - Descriptive title with primary keyword
+  - Meta description (150-160 chars)
+  - Headers use relevant keywords naturally
+  - Internal and external links
+  - Alt text for images/diagrams
+
+  ## Code Example Standards
+  - Syntax highlighted with language specified
+  - Comments explain non-obvious parts
+  - Runnable snippets where possible
+  - Error handling included
+  - Output shown where helpful
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # {{title}}
+
+  <!-- Meta: {{meta_description}} -->
+  <!-- Keywords: {{keywords}} -->
+  <!-- Reading Time: {{reading_time}} -->
+  <!-- Difficulty: {{difficulty_level}} -->
+
+  ---
+
+  **TL;DR:** {{tldr}}
+
+  ---
+
+  ## Introduction
+
+  {{hook_paragraph}}
+
+  {{problem_statement}}
+
+  In this article, you'll learn:
+  - {{learning_point_1}}
+  - {{learning_point_2}}
+  - {{learning_point_3}}
+
+  ## Prerequisites
+
+  Before we start, make sure you have:
+  - {{prereq_1}}
+  - {{prereq_2}}
+
+  ## {{section_1_title}}
+
+  {{section_1_content}}
+
+  ```{{language}}
+  {{code_example_1}}
+  ```
+
+  {{code_explanation_1}}
+
+  ## {{section_2_title}}
+
+  {{section_2_content}}
+
+  > **Pro Tip:** {{pro_tip}}
+
+  ## {{section_3_title}}
+
+  {{section_3_content}}
+
+  ### Common Pitfalls
+
+  {{pitfalls_list}}
+
+  ## Real-World Example
+
+  {{real_world_scenario}}
+
+  ```{{language}}
+  {{complete_example}}
+  ```
+
+  ## Performance Considerations
+
+  {{performance_notes}}
+
+  ## Conclusion
+
+  {{summary}}
+
+  ### Next Steps
+
+  - {{next_step_1}}
+  - {{next_step_2}}
+
+  ### Resources
+
+  - {{resource_1}}
+  - {{resource_2}}
+
+  ---
+
+  *Did you find this helpful? Share it with your team or leave a comment below!*
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: topic
+    type: string
+    required: true
+    description: "The technical topic or concept to write about"
+  - name: target_audience
+    type: enum
+    options: [beginner, intermediate, advanced, all-levels]
+    default: intermediate
+    description: "Target skill level of readers"
+  - name: word_count
+    type: enum
+    options: [short, medium, long, comprehensive]
+    default: medium
+    description: "Approximate length (short: 800, medium: 1500, long: 2500+)"
+  - name: include_code
+    type: boolean
+    default: true
+    description: "Include code examples"
+  - name: language
+    type: string
+    default: "javascript"
+    description: "Primary programming language for examples"
+  - name: tone
+    type: enum
+    options: [formal, conversational, tutorial, opinion]
+    default: conversational
+    description: "Writing tone/style"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Write a blog post about implementing rate limiting in Node.js APIs"
+    expected_output: |
+      # Rate Limiting Your Node.js API: A Practical Guide
+
+      <!-- Meta: Learn how to implement rate limiting in Node.js to protect your API from abuse and ensure fair usage. Includes code examples with Express. -->
+      <!-- Keywords: rate limiting, node.js, api security, express middleware -->
+      <!-- Reading Time: 8 minutes -->
+      <!-- Difficulty: Intermediate -->
+
+      ---
+
+      **TL;DR:** Use `express-rate-limit` for simple cases, Redis-backed solutions for distributed systems. Start with 100 requests/15 minutes for authenticated endpoints.
+
+      ---
+
+      ## Introduction
+
+      Last week, a bot discovered our public API and made 50,000 requests in an hour. Our server crashed, legitimate users couldn't access the service, and we lost $2,000 in that downtime.
+
+      Rate limiting would have prevented this. It's not just about security--it's about ensuring fair access, controlling costs, and maintaining service quality for everyone.
+
+      In this article, you'll learn:
+      - Why rate limiting is essential for production APIs
+      - How to implement rate limiting with Express.js
+      - Strategies for distributed systems (Redis-backed)
+      - Best practices for user-friendly rate limit responses
+
+      ## Prerequisites
+
+      - Node.js 18+ installed
+      - Basic Express.js knowledge
+      - (Optional) Redis for distributed rate limiting
+
+      ## Understanding Rate Limiting Algorithms
+
+      Before implementing, let's understand the three main approaches:
+
+      | Algorithm | Pros | Cons | Use Case |
+      |-----------|------|------|----------|
+      | Fixed Window | Simple, low memory | Burst at window edges | Low-traffic APIs |
+      | Sliding Window | Smoother distribution | More complex | Production APIs |
+      | Token Bucket | Allows controlled bursts | Harder to explain | High-traffic APIs |
+
+      ## Basic Implementation with Express
+
+      ```javascript
+      import rateLimit from 'express-rate-limit';
+
+      const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: {
+          error: 'Too many requests',
+          retryAfter: '15 minutes'
+        },
+        standardHeaders: true, // Return rate limit info in headers
+        legacyHeaders: false,
+      });
+
+      app.use('/api/', limiter);
+      ```
+
+      > **Pro Tip:** Always include `Retry-After` header and a human-readable message. Your users will thank you.
+
+      ## Distributed Rate Limiting with Redis
+
+      For applications running on multiple servers, in-memory rate limiting won't work--each server has its own counter. Redis provides a shared state:
+
+      ```javascript
+      import { RateLimiterRedis } from 'rate-limiter-flexible';
+      import Redis from 'ioredis';
+
+      const redis = new Redis(process.env.REDIS_URL);
+
+      const rateLimiter = new RateLimiterRedis({
+        storeClient: redis,
+        keyPrefix: 'rl',
+        points: 100,
+        duration: 900, // 15 minutes
+        blockDuration: 900, // Block for 15 min if exceeded
+      });
+      ```
+
+      ## Conclusion
+
+      Rate limiting is a fundamental protection for any production API. Start with the simple `express-rate-limit` package, and scale to Redis-backed solutions as your traffic grows.
+
+      ### Next Steps
+
+      - Implement basic rate limiting on your API today
+      - Set up monitoring to track rate limit hits
+      - Consider tiered limits for different user plans
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.92
+  compatible_agents:
+    - content-writer
+    - technical-writer
+    - marketing-assistant

@@ -1,0 +1,296 @@
+# =============================================================================
+# WEEKLY STATUS REPORT
+# =============================================================================
+# Generate professional weekly status reports for stakeholders
+# Version: 1.0.0 | Category: business
+# =============================================================================
+
+id: status-report-v1
+name: "Weekly Status Report Generator"
+version: "1.0.0"
+category: business
+tags: [status-report, weekly-update, project-management, stakeholder, communication]
+
+description: |
+  Generates clear, actionable weekly status reports from raw updates,
+  highlighting progress, blockers, risks, and next week's priorities.
+  Suitable for project managers, team leads, and stakeholders.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - status report
+    - weekly update
+    - progress report
+    - team update
+    - sprint report
+    - project status
+    - standup summary
+
+  patterns:
+    - "\\b(write|create|generate)\\b.*\\b(status|progress|weekly)\\b.*\\b(report|update)\\b"
+    - "\\b(summarize|compile)\\b.*\\b(week|sprint|progress)\\b"
+    - "\\b(what|how)\\b.*\\b(accomplished|completed|blocked)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a skilled project manager and communicator who creates clear,
+  concise status reports that help stakeholders quickly understand project health
+  and make informed decisions.
+
+  ## Status Report Principles
+
+  ### Format: TLDR First
+  - Executive summary in first 3 sentences
+  - Traffic light status (Green/Yellow/Red)
+  - Key metrics at a glance
+
+  ### Content Structure
+  1. **Overall Status** - Health indicator with brief explanation
+  2. **Accomplishments** - What was completed (with metrics)
+  3. **In Progress** - Active work with completion estimates
+  4. **Blockers** - Issues needing attention (with owner)
+  5. **Risks** - Potential future problems
+  6. **Next Week** - Priorities and commitments
+  7. **Metrics** - KPIs and trends
+
+  ### Writing Guidelines
+  - Be specific: "Completed 3 features" not "Made progress"
+  - Include numbers: "Reduced load time by 40%"
+  - Highlight what needs attention
+  - Keep it scannable (bullets, tables)
+  - Action items have owners and dates
+  - 1 page max for executive summary
+
+  ### Traffic Light System
+  - **Green** - On track, no blockers
+  - **Yellow** - Minor issues, mitigation in place
+  - **Red** - Major issues, needs escalation
+
+  ### Metrics to Include
+  - Sprint velocity / story points
+  - Bug count trend
+  - Test coverage
+  - Deploy frequency
+  - Custom KPIs
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # Weekly Status Report: {{project_name}}
+
+  **Week:** {{week_number}} ({{date_range}})
+  **Prepared by:** {{author}}
+  **Distribution:** {{distribution_list}}
+
+  ---
+
+  ## Overall Status: {{status_emoji}} {{status_label}}
+
+  {{status_summary}}
+
+  | Metric | This Week | Last Week | Trend |
+  |--------|-----------|-----------|-------|
+  | Velocity | {{velocity_current}} | {{velocity_last}} | {{velocity_trend}} |
+  | Open Bugs | {{bugs_current}} | {{bugs_last}} | {{bugs_trend}} |
+  | Test Coverage | {{coverage_current}}% | {{coverage_last}}% | {{coverage_trend}} |
+
+  ---
+
+  ## Accomplishments
+
+  {{#each accomplishments}}
+  - {{#if emoji}}{{emoji}} {{/if}}**{{title}}** {{#if metric}}({{metric}}){{/if}}
+    {{#if details}}- {{details}}{{/if}}
+  {{/each}}
+
+  ---
+
+  ## In Progress
+
+  | Item | Owner | Est. Completion | Status |
+  |------|-------|-----------------|--------|
+  {{#each in_progress}}
+  | {{title}} | {{owner}} | {{eta}} | {{status}} |
+  {{/each}}
+
+  ---
+
+  ## Blockers
+
+  {{#if blockers}}
+  | Blocker | Impact | Owner | Action Needed |
+  |---------|--------|-------|---------------|
+  {{#each blockers}}
+  | {{description}} | {{impact}} | {{owner}} | {{action}} |
+  {{/each}}
+  {{else}}
+  No blockers this week.
+  {{/if}}
+
+  ---
+
+  ## Risks
+
+  {{#if risks}}
+  | Risk | Probability | Impact | Mitigation |
+  |------|-------------|--------|------------|
+  {{#each risks}}
+  | {{description}} | {{probability}} | {{impact}} | {{mitigation}} |
+  {{/each}}
+  {{else}}
+  No new risks identified.
+  {{/if}}
+
+  ---
+
+  ## Next Week Priorities
+
+  {{#each priorities}}
+  1. **{{title}}** - {{description}} (Owner: {{owner}})
+  {{/each}}
+
+  ---
+
+  ## Team Notes
+
+  {{team_notes}}
+
+  ---
+
+  ## Action Items
+
+  | Action | Owner | Due Date | Status |
+  |--------|-------|----------|--------|
+  {{#each action_items}}
+  | {{description}} | {{owner}} | {{due_date}} | {{status}} |
+  {{/each}}
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: raw_updates
+    type: string
+    required: true
+    description: "Raw input: standup notes, completed tasks, issues"
+  - name: project_name
+    type: string
+    required: true
+    description: "Name of the project/initiative"
+  - name: week_number
+    type: string
+    default: ""
+    description: "Week number or sprint identifier"
+  - name: audience
+    type: enum
+    options: [technical, executive, mixed]
+    default: mixed
+    description: "Primary audience"
+  - name: include_metrics
+    type: boolean
+    default: true
+    description: "Include quantitative metrics section"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: |
+      Generate status report from these updates:
+      - Finished user auth migration, took 2 days longer than expected
+      - Fixed 12 bugs, 3 critical
+      - Performance testing blocked - need staging environment
+      - Sarah on PTO next week
+      - Started payment integration, 40% done
+      - CI/CD pipeline now 30% faster
+    expected_output: |
+      # Weekly Status Report: Platform Modernization
+
+      **Week:** 3 (Jan 6-10, 2026)
+      **Prepared by:** Project Manager
+
+      ---
+
+      ## Overall Status: Yellow - On Track with Minor Delays
+
+      Auth migration completed despite 2-day delay. Performance testing blocked pending staging
+      environment. Payment integration progressing well. Note: Key team member on PTO next week.
+
+      | Metric | This Week | Last Week | Trend |
+      |--------|-----------|-----------|-------|
+      | Velocity | 21 pts | 24 pts | -12% |
+      | Open Bugs | 8 | 17 | -53% |
+      | Test Coverage | 76% | 74% | +2% |
+
+      ---
+
+      ## Accomplishments
+
+      - **User Authentication Migration Complete** - 2 days over estimate, now stable
+      - **12 Bugs Fixed** - Including 3 critical security issues
+      - **CI/CD Pipeline Optimization** - 30% faster build times
+
+      ---
+
+      ## In Progress
+
+      | Item | Owner | Est. Completion | Status |
+      |------|-------|-----------------|--------|
+      | Payment Integration | Alex | Jan 17 | 40% complete |
+      | API Documentation | Jordan | Jan 13 | 70% complete |
+
+      ---
+
+      ## Blockers
+
+      | Blocker | Impact | Owner | Action Needed |
+      |---------|--------|-------|---------------|
+      | Staging environment unavailable | Performance testing delayed | DevOps | Escalate to IT - ETA? |
+
+      ---
+
+      ## Risks
+
+      | Risk | Probability | Impact | Mitigation |
+      |------|-------------|--------|------------|
+      | Sarah PTO may delay code review | Medium | Low | Cross-train Jordan this week |
+      | Staging delay > 1 week | Medium | High | Parallel track: local perf tests |
+
+      ---
+
+      ## Next Week Priorities
+
+      1. **Complete Payment Integration** - Target 80% by Friday (Owner: Alex)
+      2. **Resolve Staging Blocker** - Escalate if no progress by Tuesday (Owner: DevOps)
+      3. **Knowledge Transfer** - Sarah to brief Jordan on auth module (Owner: Sarah)
+
+      ---
+
+      ## Action Items
+
+      | Action | Owner | Due Date | Status |
+      |--------|-------|----------|--------|
+      | Escalate staging env request | PM | Jan 7 | Pending |
+      | Schedule Jordan/Sarah handoff | Sarah | Jan 8 | New |
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.90
+  compatible_agents:
+    - project-manager
+    - team-lead
+    - scrum-master

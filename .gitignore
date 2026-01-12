@@ -1,0 +1,18 @@
+/target
+.DS_Store
+*.swp
+*.swo
+
+# Local data
+/data/*.mv2
+/data/*.json
+
+# IDE
+.idea/
+.vscode/
+
+# Beads (internal task tracking - excluded from public)
+.beads/
+
+# Keep prompt library tracked
+# All prompts/ subfolders are part of the curated library

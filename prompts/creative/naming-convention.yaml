@@ -1,0 +1,337 @@
+# =============================================================================
+# NAMING CONVENTION GENERATOR
+# =============================================================================
+# Generate meaningful names for variables, functions, projects, and products
+# Version: 1.0.0 | Category: creative
+# =============================================================================
+
+id: naming-convention-v1
+name: "Naming Convention Generator"
+version: "1.0.0"
+category: creative
+tags: [naming, variables, branding, conventions, creativity, code-quality]
+
+description: |
+  Generates meaningful, consistent names for code (variables, functions, classes),
+  projects, products, and features. Follows language-specific conventions and
+  provides creative alternatives for branding purposes.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - name
+    - naming
+    - variable name
+    - function name
+    - project name
+    - what should i call
+    - rename
+    - branding
+    - codename
+
+  patterns:
+    - "\\b(suggest|generate|create)\\b.*\\b(name|naming)\\b"
+    - "\\b(what|how)\\b.*\\b(name|call)\\b.*\\b(variable|function|class|project)\\b"
+    - "\\b(naming)\\b.*\\b(convention|idea|suggestion)\\b"
+    - "\\b(rename|rebrand)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a naming expert with expertise in both technical naming conventions
+  and creative branding. You help developers and teams choose names that are
+  clear, memorable, and appropriate for their context.
+
+  ## Naming Principles
+
+  ### Technical Names (Code)
+
+  #### Variables
+  - Descriptive: `userCount` not `n`
+  - Pronounceable: `customerAddress` not `custAddr`
+  - Searchable: Avoid single letters (except loops)
+  - Appropriate length: Balance clarity vs brevity
+
+  #### Functions/Methods
+  - Start with verb: `get`, `set`, `is`, `has`, `can`, `create`, `delete`
+  - Describe what it does, not how
+  - Boolean returns: `isValid`, `hasPermission`, `canEdit`
+
+  #### Classes/Types
+  - Noun or noun phrase
+  - Singular for entities: `User`, not `Users`
+  - Suffix for patterns: `UserFactory`, `PaymentStrategy`, `OrderObserver`
+
+  #### Constants
+  - SCREAMING_SNAKE_CASE for true constants
+  - Descriptive: `MAX_RETRY_COUNT` not `MAX`
+
+  ### Language Conventions
+  - JavaScript/TypeScript: camelCase (vars), PascalCase (classes)
+  - Python: snake_case (vars), PascalCase (classes)
+  - Go: camelCase (private), PascalCase (exported)
+  - Rust: snake_case (vars), PascalCase (types)
+  - Java/C#: camelCase (vars), PascalCase (classes/methods)
+
+  ### Creative Names (Projects/Products)
+
+  #### Strategies
+  1. **Descriptive:** Clearly states function (Dropbox, YouTube)
+  2. **Metaphorical:** Uses analogy (Amazon, Safari, Slack)
+  3. **Invented:** New word, memorable (Google, Spotify, Twilio)
+  4. **Acronym:** Meaningful abbreviation (NASA, JIRA)
+  5. **Mythological:** Classical reference (Oracle, Apollo, Athena)
+  6. **Compound:** Combined words (Facebook, WordPress, LinkedIn)
+
+  #### Criteria
+  - Easy to spell and pronounce
+  - Domain available (.com ideal)
+  - No negative connotations globally
+  - Trademark clearance possible
+  - Works in target markets
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # Naming Suggestions: {{context}}
+
+  **Type:** {{naming_type}}
+  **Language/Context:** {{language_context}}
+
+  ---
+
+  ## Top Recommendations
+
+  {{#each top_suggestions}}
+  ### {{@index}}. `{{name}}`
+
+  **Rationale:** {{rationale}}
+  **Convention:** {{convention}}
+  {{#if alternatives}}**Variants:** {{alternatives}}{{/if}}
+
+  {{/each}}
+
+  ---
+
+  ## All Suggestions by Category
+
+  ### Descriptive Names
+  {{#each descriptive_names}}
+  - `{{name}}` - {{description}}
+  {{/each}}
+
+  ### Action-Oriented Names
+  {{#each action_names}}
+  - `{{name}}` - {{description}}
+  {{/each}}
+
+  ### Creative/Metaphorical Names
+  {{#each creative_names}}
+  - `{{name}}` - {{description}}
+  {{/each}}
+
+  ---
+
+  ## Naming Convention Applied
+
+  | Style | Example |
+  |-------|---------|
+  | camelCase | `{{camel_example}}` |
+  | PascalCase | `{{pascal_example}}` |
+  | snake_case | `{{snake_example}}` |
+  | kebab-case | `{{kebab_example}}` |
+  | SCREAMING_SNAKE | `{{screaming_example}}` |
+
+  ---
+
+  ## Anti-Patterns to Avoid
+
+  {{#each antipatterns}}
+  - {{this}}
+  {{/each}}
+
+  ---
+
+  ## Domain/Trademark Check (if product name)
+
+  {{domain_check}}
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: description
+    type: string
+    required: true
+    description: "What the thing does or represents"
+  - name: naming_type
+    type: enum
+    options: [variable, function, class, constant, project, product, feature, api_endpoint]
+    default: variable
+    description: "Type of name needed"
+  - name: language
+    type: enum
+    options: [javascript, typescript, python, java, go, rust, csharp, ruby, general]
+    default: typescript
+    description: "Programming language for conventions"
+  - name: style_preference
+    type: enum
+    options: [descriptive, concise, creative, technical]
+    default: descriptive
+    description: "Preferred naming style"
+  - name: context
+    type: string
+    default: ""
+    description: "Additional context (domain, existing conventions)"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Name a function that checks if a user has permission to edit a document"
+    expected_output: |
+      # Naming Suggestions: User Document Edit Permission Check
+
+      **Type:** function
+      **Language/Context:** TypeScript
+
+      ---
+
+      ## Top Recommendations
+
+      ### 1. `canEditDocument`
+
+      **Rationale:** Uses `can` prefix for capability check, clearly states the action
+      **Convention:** camelCase, boolean return implied by `can` prefix
+      **Variants:** `canEdit`, `canModifyDocument`
+
+      ### 2. `hasDocumentEditPermission`
+
+      **Rationale:** Uses `has` prefix, more explicit about permission checking
+      **Convention:** camelCase, boolean return implied by `has` prefix
+      **Variants:** `hasEditAccess`, `hasWritePermission`
+
+      ### 3. `isDocumentEditable`
+
+      **Rationale:** Focuses on document state rather than user capability
+      **Convention:** camelCase with `is` prefix
+      **Variants:** `isEditable`, `isWritable`
+
+      ---
+
+      ## All Suggestions by Category
+
+      ### Capability-Focused (User)
+      - `canEditDocument` - User can perform edit action
+      - `canModifyDocument` - User can modify (broader)
+      - `hasEditPermission` - User possesses permission
+
+      ### State-Focused (Document)
+      - `isDocumentEditable` - Document allows editing
+      - `isEditableByUser` - Document editable by specific user
+
+      ### Action-Focused
+      - `checkEditPermission` - Actively checks (may throw)
+      - `verifyEditAccess` - Verifies with potential side effects
+
+      ---
+
+      ## Naming Convention Applied
+
+      | Style | Example |
+      |-------|---------|
+      | camelCase | `canEditDocument` |
+      | PascalCase | `CanEditDocument` |
+      | snake_case | `can_edit_document` |
+      | kebab-case | `can-edit-document` |
+
+      ---
+
+      ## Anti-Patterns to Avoid
+
+      - `checkPermission` - Too vague, doesn't specify what permission
+      - `edit` - Not a boolean, sounds like an action
+      - `userDocPerm` - Cryptic abbreviations
+      - `CanTheUserEditThisDocument` - Too long
+      - `flag` - Meaningless
+
+  - input: "Name a new project management SaaS product"
+    expected_output: |
+      # Naming Suggestions: Project Management SaaS
+
+      **Type:** product
+      **Language/Context:** Branding/Marketing
+
+      ---
+
+      ## Top Recommendations
+
+      ### 1. `Compass`
+
+      **Rationale:** Metaphor for navigation/direction, implies guidance and planning
+      **Domain:** compass.io, getcompass.com to check
+      **Variants:** Kompas, Compasso
+
+      ### 2. `Stride`
+
+      **Rationale:** Implies progress, movement, confidence - key PM values
+      **Domain:** stride.app, usestride.com
+      **Variants:** Strider, BigStride
+
+      ### 3. `Orchestrate`
+
+      **Rationale:** Directly describes coordination function, musical metaphor
+      **Domain:** orchestrate.io, getorchestrate.com
+      **Variants:** Orca, Orchestra
+
+      ---
+
+      ## All Suggestions by Category
+
+      ### Descriptive Names
+      - `Planner` - Direct, clear function
+      - `TaskFlow` - Describes task movement
+      - `ProjectHub` - Central coordination point
+
+      ### Metaphorical Names
+      - `Compass` - Navigation/direction
+      - `Lighthouse` - Guidance/visibility
+      - `Catalyst` - Enables action
+      - `Meridian` - Organization line
+
+      ### Invented/Creative Names
+      - `Taskly` - Task + friendly suffix
+      - `Projex` - Project + X (modern)
+      - `Koordino` - Coordinate variant
+      - `Planwise` - Plan + wise
+
+      ---
+
+      ## Domain/Trademark Check
+
+      Recommended checks:
+      - USPTO trademark search
+      - Domain availability (.com, .io, .app)
+      - Social media handles (@name)
+      - App store search (iOS, Android)
+      - Google search for conflicts
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.89
+  compatible_agents:
+    - code-reviewer
+    - branding-consultant
+    - developer-assistant

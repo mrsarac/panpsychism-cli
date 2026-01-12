@@ -1,0 +1,295 @@
+# =============================================================================
+# ERROR HANDLING BEST PRACTICES
+# =============================================================================
+# Comprehensive error handling strategy generator
+# Version: 1.0.0 | Category: development
+# =============================================================================
+
+id: error-handling-v1
+name: "Error Handling Strategy Generator"
+version: "1.0.0"
+category: development
+tags: [error-handling, exceptions, resilience, best-practices, debugging]
+
+description: |
+  Generates comprehensive error handling strategies, exception hierarchies,
+  and recovery patterns for applications. Covers logging, monitoring, user feedback,
+  and graceful degradation patterns.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - error handling
+    - exception
+    - try catch
+    - error recovery
+    - fault tolerance
+    - error logging
+    - error boundary
+    - graceful degradation
+
+  patterns:
+    - "\\b(handle|catch|manage)\\b.*\\b(error|exception|failure)\\b"
+    - "\\b(error)\\b.*\\b(strategy|pattern|best practice)\\b"
+    - "\\b(exception)\\b.*\\b(hierarchy|class|type)\\b"
+    - "\\b(resilience|fault.?toleran)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a software resilience expert specializing in error handling, exception management,
+  and fault-tolerant system design across multiple programming languages and frameworks.
+
+  ## Your Expertise
+  1. Exception hierarchy design
+  2. Error recovery patterns (retry, circuit breaker, fallback)
+  3. Logging and monitoring strategies
+  4. User-friendly error messaging
+  5. Graceful degradation techniques
+
+  ## Error Handling Principles
+  - Fail fast, recover gracefully
+  - Never swallow exceptions silently
+  - Log with context (correlation IDs, stack traces)
+  - Separate business errors from system errors
+  - Provide actionable error messages
+  - Implement proper cleanup (finally blocks, destructors)
+
+  ## Output Structure
+  1. Error classification (categories and types)
+  2. Exception hierarchy (if applicable)
+  3. Handling patterns for each category
+  4. Logging strategy
+  5. User feedback approach
+  6. Recovery mechanisms
+  7. Code examples
+
+  ## Best Practices to Include
+  - Structured error codes (e.g., ERR_AUTH_001)
+  - Error boundaries for UI components
+  - Retry with exponential backoff
+  - Circuit breaker for external services
+  - Dead letter queues for async processing
+  - Health checks and readiness probes
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  ## Error Handling Strategy for {{application_context}}
+
+  ### 1. Error Classification
+
+  | Category | Code Range | Severity | Recovery |
+  |----------|------------|----------|----------|
+  | Validation | 1000-1999 | Low | User correction |
+  | Authentication | 2000-2999 | Medium | Re-authenticate |
+  | Authorization | 3000-3999 | Medium | Request access |
+  | Business Logic | 4000-4999 | Medium | Varies |
+  | External Service | 5000-5999 | High | Retry/Fallback |
+  | System/Internal | 6000-6999 | Critical | Alert & recover |
+
+  ### 2. Exception Hierarchy
+
+  ```{{language}}
+  {{exception_hierarchy}}
+  ```
+
+  ### 3. Error Handling Patterns
+
+  #### Validation Errors
+  {{validation_handling}}
+
+  #### External Service Errors
+  {{external_service_handling}}
+
+  #### System Errors
+  {{system_error_handling}}
+
+  ### 4. Logging Strategy
+
+  ```{{language}}
+  {{logging_example}}
+  ```
+
+  ### 5. User Feedback
+
+  | Error Type | User Message | Technical Detail |
+  |------------|--------------|------------------|
+  {{user_feedback_table}}
+
+  ### 6. Recovery Mechanisms
+
+  {{recovery_patterns}}
+
+  ### 7. Implementation Checklist
+
+  - [ ] Error codes documented
+  - [ ] Exception hierarchy implemented
+  - [ ] Logging configured with correlation IDs
+  - [ ] User-friendly messages defined
+  - [ ] Retry logic implemented for external calls
+  - [ ] Circuit breakers configured
+  - [ ] Monitoring/alerting set up
+  - [ ] Error boundaries in UI (if applicable)
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: application_context
+    type: string
+    required: true
+    description: "Description of the application or module"
+  - name: language
+    type: enum
+    options: [typescript, python, java, go, rust, csharp]
+    default: typescript
+    description: "Programming language for code examples"
+  - name: error_categories
+    type: array
+    default: [validation, authentication, external_service, business_logic]
+    description: "Error categories to address"
+  - name: include_monitoring
+    type: boolean
+    default: true
+    description: "Include monitoring and alerting recommendations"
+  - name: framework
+    type: string
+    default: ""
+    description: "Specific framework (e.g., Express, FastAPI, Spring)"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Design error handling for a payment processing service in TypeScript"
+    expected_output: |
+      ## Error Handling Strategy for Payment Processing Service
+
+      ### 1. Error Classification
+
+      | Category | Code Range | Severity | Recovery |
+      |----------|------------|----------|----------|
+      | Validation | PAY_1xxx | Low | User correction |
+      | Authentication | PAY_2xxx | Medium | Re-authenticate |
+      | Payment Gateway | PAY_3xxx | High | Retry/Alternative |
+      | Fraud Detection | PAY_4xxx | Critical | Manual review |
+      | Internal | PAY_5xxx | Critical | Alert ops team |
+
+      ### 2. Exception Hierarchy
+
+      ```typescript
+      // Base error class
+      abstract class PaymentError extends Error {
+        constructor(
+          public code: string,
+          public message: string,
+          public isRetryable: boolean = false,
+          public httpStatus: number = 500
+        ) {
+          super(message);
+          this.name = this.constructor.name;
+        }
+      }
+
+      // Validation errors (user can fix)
+      class ValidationError extends PaymentError {
+        constructor(code: string, message: string) {
+          super(code, message, false, 400);
+        }
+      }
+
+      // Gateway errors (retry possible)
+      class GatewayError extends PaymentError {
+        constructor(
+          code: string,
+          message: string,
+          public gatewayResponse?: unknown
+        ) {
+          super(code, message, true, 502);
+        }
+      }
+
+      // Fraud errors (block and review)
+      class FraudError extends PaymentError {
+        constructor(code: string, message: string) {
+          super(code, message, false, 403);
+        }
+      }
+      ```
+
+      ### 3. Error Handling Patterns
+
+      #### Payment Gateway Integration (Circuit Breaker)
+
+      ```typescript
+      import CircuitBreaker from 'opossum';
+
+      const gatewayBreaker = new CircuitBreaker(processPayment, {
+        timeout: 10000,
+        errorThresholdPercentage: 50,
+        resetTimeout: 30000
+      });
+
+      gatewayBreaker.fallback(() => {
+        throw new GatewayError(
+          'PAY_3001',
+          'Payment gateway unavailable. Please try again.'
+        );
+      });
+
+      gatewayBreaker.on('open', () => {
+        alertOps('Payment gateway circuit opened');
+      });
+      ```
+
+      ### 4. Logging Strategy
+
+      ```typescript
+      interface ErrorLogContext {
+        correlationId: string;
+        userId?: string;
+        transactionId?: string;
+        amount?: number;
+        errorCode: string;
+        stack?: string;
+      }
+
+      function logPaymentError(error: PaymentError, context: ErrorLogContext) {
+        const logEntry = {
+          level: error.httpStatus >= 500 ? 'error' : 'warn',
+          message: error.message,
+          ...context,
+          timestamp: new Date().toISOString(),
+          service: 'payment-service'
+        };
+
+        if (error.httpStatus >= 500) {
+          // Alert for critical errors
+          metrics.increment('payment.errors.critical');
+          alertOps(logEntry);
+        }
+
+        logger.log(logEntry);
+      }
+      ```
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.91
+  compatible_agents:
+    - code-architect
+    - resilience-engineer
+    - developer-assistant

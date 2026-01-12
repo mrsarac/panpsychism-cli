@@ -1,0 +1,350 @@
+# =============================================================================
+# PROJECT PROPOSAL WRITER
+# =============================================================================
+# Create compelling project proposals for stakeholders
+# Version: 1.0.0 | Category: business
+# =============================================================================
+
+id: project-proposal-v1
+name: "Project Proposal Generator"
+version: "1.0.0"
+category: business
+tags: [proposal, business-case, planning, stakeholder, pitch]
+
+description: |
+  Generates professional project proposals with executive summary,
+  problem statement, proposed solution, timeline, budget, and risk analysis.
+  Tailored for different stakeholder audiences.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - project proposal
+    - business case
+    - proposal document
+    - pitch
+    - initiative
+    - project plan
+    - resource request
+
+  patterns:
+    - "\\b(write|create|draft)\\b.*\\b(proposal|business case|pitch)\\b"
+    - "\\b(project)\\b.*\\b(approval|funding|initiative)\\b"
+    - "\\b(propose|suggest)\\b.*\\b(project|initiative|solution)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a senior business analyst and project manager with expertise in
+  creating compelling project proposals that win stakeholder buy-in and
+  secure funding approval.
+
+  ## Proposal Structure
+
+  ### 1. Executive Summary
+  - One page max
+  - Problem, solution, key benefits, ask
+  - Written for C-level (no jargon)
+
+  ### 2. Problem Statement
+  - Current situation analysis
+  - Pain points with data
+  - Cost of inaction
+  - Who is affected
+
+  ### 3. Proposed Solution
+  - What we'll build/do
+  - Why this approach
+  - Alternatives considered
+  - Success criteria
+
+  ### 4. Business Value
+  - ROI calculation
+  - Qualitative benefits
+  - Strategic alignment
+  - Quick wins vs long-term
+
+  ### 5. Scope & Timeline
+  - In scope / out of scope
+  - Phases and milestones
+  - Dependencies
+  - Gantt chart or timeline visual
+
+  ### 6. Resource Requirements
+  - Team composition
+  - Budget breakdown
+  - Tools/infrastructure
+  - External dependencies
+
+  ### 7. Risk Analysis
+  - Risk matrix (likelihood x impact)
+  - Mitigation strategies
+  - Contingency plans
+
+  ### 8. Governance & Next Steps
+  - Decision needed
+  - Approval process
+  - Immediate actions
+
+  ## Writing Guidelines
+  - Lead with business value, not technical details
+  - Use data and metrics wherever possible
+  - Address likely objections proactively
+  - Keep executive summary standalone
+  - Include clear call-to-action
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # Project Proposal: {{project_name}}
+
+  **Version:** {{version}}
+  **Author:** {{author}}
+  **Date:** {{date}}
+  **Status:** {{status}}
+
+  ---
+
+  ## Executive Summary
+
+  {{executive_summary}}
+
+  | Item | Detail |
+  |------|--------|
+  | **Problem** | {{problem_brief}} |
+  | **Solution** | {{solution_brief}} |
+  | **Investment** | {{investment}} |
+  | **ROI** | {{roi_summary}} |
+  | **Timeline** | {{timeline_summary}} |
+
+  **Decision Requested:** {{decision_request}}
+
+  ---
+
+  ## 1. Problem Statement
+
+  ### Current Situation
+  {{current_situation}}
+
+  ### Pain Points
+  {{#each pain_points}}
+  - **{{title}}:** {{description}} (Impact: {{impact}})
+  {{/each}}
+
+  ### Cost of Inaction
+  {{cost_of_inaction}}
+
+  ---
+
+  ## 2. Proposed Solution
+
+  ### Overview
+  {{solution_overview}}
+
+  ### Key Features
+  {{#each features}}
+  1. **{{title}}** - {{description}}
+  {{/each}}
+
+  ### Alternatives Considered
+
+  | Option | Pros | Cons | Recommendation |
+  |--------|------|------|----------------|
+  {{alternatives_table}}
+
+  ---
+
+  ## 3. Business Value
+
+  ### Quantitative Benefits
+
+  | Benefit | Year 1 | Year 2 | Year 3 |
+  |---------|--------|--------|--------|
+  {{benefits_table}}
+
+  ### ROI Analysis
+  {{roi_analysis}}
+
+  ### Strategic Alignment
+  {{strategic_alignment}}
+
+  ---
+
+  ## 4. Scope & Timeline
+
+  ### In Scope
+  {{in_scope}}
+
+  ### Out of Scope
+  {{out_of_scope}}
+
+  ### Milestones
+
+  | Phase | Duration | Deliverables | Date |
+  |-------|----------|--------------|------|
+  {{milestones_table}}
+
+  ---
+
+  ## 5. Resource Requirements
+
+  ### Team
+  {{team_requirements}}
+
+  ### Budget
+
+  | Category | Amount | Notes |
+  |----------|--------|-------|
+  {{budget_table}}
+
+  **Total Investment:** {{total_investment}}
+
+  ---
+
+  ## 6. Risk Analysis
+
+  | Risk | Likelihood | Impact | Mitigation |
+  |------|------------|--------|------------|
+  {{risk_table}}
+
+  ---
+
+  ## 7. Next Steps
+
+  **Approval needed by:** {{approval_deadline}}
+
+  ### Immediate Actions (upon approval)
+  1. {{action_1}}
+  2. {{action_2}}
+  3. {{action_3}}
+
+  ---
+
+  ## Appendix
+
+  {{appendix_content}}
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: project_description
+    type: string
+    required: true
+    description: "Description of the project/initiative"
+  - name: audience
+    type: enum
+    options: [executive, technical, mixed, board]
+    default: executive
+    description: "Primary audience for the proposal"
+  - name: budget_range
+    type: string
+    default: ""
+    description: "Expected budget range (e.g., '$50k-100k')"
+  - name: timeline
+    type: string
+    default: ""
+    description: "Expected timeline (e.g., '3-6 months')"
+  - name: organization_context
+    type: string
+    default: ""
+    description: "Company/org context for strategic alignment"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Create a proposal for migrating our monolith to microservices. Budget around $200k, 12-month timeline."
+    expected_output: |
+      # Project Proposal: Microservices Architecture Migration
+
+      **Version:** 1.0
+      **Date:** January 9, 2026
+      **Status:** Draft for Review
+
+      ---
+
+      ## Executive Summary
+
+      Our current monolithic architecture is limiting our ability to scale, deploy frequently,
+      and attract top engineering talent. We propose a phased migration to microservices over
+      12 months, with an investment of $200,000 that will yield an estimated 340% ROI over 3 years.
+
+      | Item | Detail |
+      |------|--------|
+      | **Problem** | Monolith bottleneck: 2-week deploy cycles, 40% slower feature delivery |
+      | **Solution** | Phased microservices migration with strangler fig pattern |
+      | **Investment** | $200,000 (Year 1) |
+      | **ROI** | 340% over 3 years ($680k in efficiency gains) |
+      | **Timeline** | 12 months (4 phases) |
+
+      **Decision Requested:** Approve Q1 budget allocation and team formation
+
+      ---
+
+      ## 1. Problem Statement
+
+      ### Current Situation
+      Our 8-year-old monolithic application serves 50,000 daily users but has become
+      increasingly difficult to maintain and extend.
+
+      ### Pain Points
+      - **Deployment Bottleneck:** 2-week release cycles due to monolith complexity (Impact: High)
+      - **Scaling Limitations:** Cannot scale components independently (Impact: High)
+      - **Developer Productivity:** 40% of time spent on merge conflicts and coordination (Impact: Medium)
+      - **Talent Acquisition:** Lost 3 candidates who wanted modern stack (Impact: Medium)
+
+      ### Cost of Inaction
+      - Estimated $150k/year in lost productivity
+      - Risk of 2-3 day outages affecting $500k revenue
+      - Continued talent attrition
+
+      ---
+
+      ## 2. Proposed Solution
+
+      ### Overview
+      Incremental migration using the Strangler Fig pattern, extracting services starting
+      with the highest-value, lowest-risk components.
+
+      ### Migration Order
+      1. **User Authentication** - Standalone, low coupling (Month 1-2)
+      2. **Notification Service** - High change frequency (Month 3-4)
+      3. **Payment Processing** - Business critical, well-defined (Month 5-7)
+      4. **Product Catalog** - Performance bottleneck (Month 8-10)
+      5. **Order Management** - Core, final phase (Month 10-12)
+
+      ---
+
+      ## 5. Resource Requirements
+
+      ### Budget
+
+      | Category | Amount | Notes |
+      |----------|--------|-------|
+      | Engineering (2 senior + 1 mid) | $120,000 | 12 months |
+      | Infrastructure (K8s, CI/CD) | $40,000 | Cloud platform |
+      | Training & Tools | $20,000 | Team upskilling |
+      | Contingency (10%) | $20,000 | Risk buffer |
+
+      **Total Investment:** $200,000
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.93
+  compatible_agents:
+    - business-analyst
+    - project-manager
+    - strategy-advisor

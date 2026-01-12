@@ -1,0 +1,109 @@
+# Panpsychism Configuration Example
+# =================================
+# Copy this file to ~/.config/panpsychism/config.yaml
+# and customize as needed.
+
+# Directory paths
+prompts_dir: ./prompts
+data_dir: ./data
+index_file: ./data/masters.mv2
+
+# LLM Configuration (Antigravity Proxy default)
+llm_endpoint: http://127.0.0.1:8045/v1/chat/completions
+llm_api_key: sk-antigravity
+llm_model: gemini-3-flash
+
+# Privacy Configuration
+privacy:
+  default_tier: internal
+  redact_patterns: []
+
+# =============================================================================
+# NEW: Analyze Command Configuration
+# =============================================================================
+# Controls input/output behavior for the `analyze` command
+
+analyze:
+  # Default input source: stdin, clipboard, or file
+  default_input: stdin
+
+  # Default output destinations (can have multiple)
+  # Options: stdout, clipboard, file, secondcore
+  default_outputs:
+    - clipboard
+
+  # Enable verbose logging during analysis
+  verbose: false
+
+# =============================================================================
+# NEW: Output Routing Configuration
+# =============================================================================
+# Controls where processed content is delivered
+
+output:
+  # Whether to copy output to system clipboard
+  clipboard: true
+
+  # Optional file path for output (null = disabled)
+  file_path: null
+
+  # Whether to send output to Second Core webhook
+  second_core: false
+
+  # Second Core webhook endpoint URL
+  second_core_endpoint: "https://webhook.mustafasarac.com"
+
+# =============================================================================
+# NEW: Content Type to Prompt Mapping
+# =============================================================================
+# Maps detected content types to their corresponding prompt files
+
+content_mapping:
+  # Meeting notes processing
+  meeting: "prompts/master/meeting-notes.yaml"
+
+  # Code request processing
+  code: "prompts/master/code-request.yaml"
+
+  # Blog writing processing
+  blog: "prompts/master/blog-writing.yaml"
+
+  # Daily note processing
+  note: "prompts/master/daily-note.yaml"
+
+  # Household/personal processing
+  household: "prompts/master/household.yaml"
+
+# =============================================================================
+# Advanced Usage Examples
+# =============================================================================
+
+# Example 1: File-based input with multiple outputs
+# analyze:
+#   default_input: !file "/path/to/input.txt"
+#   default_outputs:
+#     - clipboard
+#     - file
+#     - secondcore
+#   verbose: true
+
+# Example 2: Clipboard workflow
+# analyze:
+#   default_input: clipboard
+#   default_outputs:
+#     - clipboard
+#   verbose: false
+
+# Example 3: Second Core integration
+# output:
+#   clipboard: true
+#   second_core: true
+#   second_core_endpoint: "https://webhook.mustafasarac.com"
+
+# Example 4: Custom prompt paths
+# content_mapping:
+#   meeting: "custom/prompts/my-meeting-template.yaml"
+#   code: "custom/prompts/code-assistant.yaml"
+#   blog: "custom/prompts/blog-writer.yaml"
+#   note: "custom/prompts/daily-journal.yaml"
+#   household: "custom/prompts/family-tasks.yaml"

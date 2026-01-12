@@ -1,0 +1,271 @@
+# =============================================================================
+# API DOCUMENTATION GENERATOR
+# =============================================================================
+# OpenAPI/Swagger specification generator for REST APIs
+# Version: 1.0.0 | Category: development
+# =============================================================================
+
+id: api-documentation-v1
+name: "API Documentation Generator"
+version: "1.0.0"
+category: development
+tags: [openapi, swagger, documentation, api, rest]
+
+description: |
+  Generates comprehensive OpenAPI 3.0/Swagger documentation from code,
+  endpoint descriptions, or natural language specifications. Produces
+  production-ready API documentation with examples, schemas, and security definitions.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - openapi
+    - swagger
+    - api doc
+    - api documentation
+    - endpoint documentation
+    - rest documentation
+    - api spec
+    - api specification
+
+  patterns:
+    - "\\b(document|generate|create|write)\\b.*\\b(api|endpoint|rest)\\b"
+    - "\\b(openapi|swagger)\\b.*\\b(spec|specification|yaml|json)\\b"
+    - "\\b(api)\\b.*\\b(reference|guide|docs)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are an expert API documentation specialist with deep knowledge of OpenAPI 3.0
+  specification, RESTful best practices, and developer experience (DX) optimization.
+
+  ## Your Role
+  1. Analyze the provided endpoint/code/description
+  2. Generate comprehensive OpenAPI 3.0 compliant documentation
+  3. Include realistic examples with proper data types
+  4. Define reusable schemas and components
+  5. Add security schemes where applicable
+
+  ## Documentation Standards
+  - Follow OpenAPI 3.0.3 specification strictly
+  - Use semantic versioning for API versions
+  - Provide meaningful operation IDs (camelCase)
+  - Include both success and error response examples
+  - Document all query parameters, headers, and body schemas
+  - Add descriptions that help developers understand intent
+
+  ## Schema Best Practices
+  - Use $ref for reusable components
+  - Define enums for fixed value sets
+  - Include format hints (date-time, email, uuid, etc.)
+  - Set proper required fields
+  - Add min/max constraints where applicable
+
+  ## Output Format
+  Generate valid YAML that can be directly used with Swagger UI or similar tools.
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  ## API Documentation
+
+  **API Name:** {{api_name}}
+  **Version:** {{version}}
+  **Base URL:** {{base_url}}
+
+  ### OpenAPI Specification
+
+  ```yaml
+  openapi: 3.0.3
+  info:
+    title: {{api_name}}
+    version: {{version}}
+    description: |
+      {{api_description}}
+    contact:
+      name: API Support
+      email: api@example.com
+
+  servers:
+    - url: {{base_url}}
+      description: {{environment}}
+
+  paths:
+    {{endpoint_path}}:
+      {{http_method}}:
+        operationId: {{operation_id}}
+        summary: {{summary}}
+        description: {{description}}
+        tags:
+          - {{tag}}
+        {{parameters}}
+        {{request_body}}
+        responses:
+          {{responses}}
+
+  components:
+    schemas:
+      {{schemas}}
+    securitySchemes:
+      {{security_schemes}}
+  ```
+
+  ### Usage Examples
+
+  **cURL:**
+  ```bash
+  {{curl_example}}
+  ```
+
+  **JavaScript:**
+  ```javascript
+  {{js_example}}
+  ```
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: endpoint_description
+    type: string
+    required: true
+    description: "Description of the API endpoint(s) to document"
+  - name: base_url
+    type: string
+    default: "https://api.example.com/v1"
+    description: "Base URL for the API"
+  - name: auth_type
+    type: enum
+    options: [bearer, api_key, oauth2, basic, none]
+    default: bearer
+    description: "Authentication type used by the API"
+  - name: output_format
+    type: enum
+    options: [yaml, json]
+    default: yaml
+    description: "Output format for the specification"
+  - name: include_examples
+    type: boolean
+    default: true
+    description: "Include request/response examples"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Document a POST /users endpoint that creates a new user with email, name, and password"
+    expected_output: |
+      ## API Documentation
+
+      **API Name:** User Management API
+      **Version:** 1.0.0
+      **Base URL:** https://api.example.com/v1
+
+      ### OpenAPI Specification
+
+      ```yaml
+      openapi: 3.0.3
+      info:
+        title: User Management API
+        version: 1.0.0
+        description: |
+          API for managing user accounts including creation, retrieval, and updates.
+
+      paths:
+        /users:
+          post:
+            operationId: createUser
+            summary: Create a new user
+            description: Creates a new user account with the provided details
+            tags:
+              - Users
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/CreateUserRequest'
+                  example:
+                    email: "user@example.com"
+                    name: "John Doe"
+                    password: "SecurePass123!"
+            responses:
+              '201':
+                description: User created successfully
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/User'
+              '400':
+                description: Invalid input
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/Error'
+              '409':
+                description: User already exists
+
+      components:
+        schemas:
+          CreateUserRequest:
+            type: object
+            required:
+              - email
+              - name
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+              name:
+                type: string
+                minLength: 2
+                maxLength: 100
+              password:
+                type: string
+                format: password
+                minLength: 8
+
+          User:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              email:
+                type: string
+                format: email
+              name:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+
+          Error:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+      ```
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.92
+  compatible_agents:
+    - api-architect
+    - documentation-writer
+    - developer-assistant

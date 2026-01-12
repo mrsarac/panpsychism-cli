@@ -1,0 +1,269 @@
+# =============================================================================
+# DATA ANALYSIS PROMPT
+# =============================================================================
+# Data exploration, insights extraction, and statistical analysis
+# Version: 1.0.0 | Category: analysis
+# =============================================================================
+
+id: data-analysis-v1
+name: "Data Analysis & Insights Generator"
+version: "1.0.0"
+category: analysis
+tags: [data-analysis, statistics, insights, visualization, exploration]
+
+description: |
+  Performs comprehensive data analysis including exploratory data analysis (EDA),
+  statistical summaries, pattern detection, and actionable insights generation.
+  Supports various data formats and produces structured analysis reports.
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - data analysis
+    - analyze data
+    - statistics
+    - correlation
+    - distribution
+    - trends
+    - insights
+    - dataset
+    - exploratory
+    - eda
+
+  patterns:
+    - "\\b(analyze|explore|examine)\\b.*\\b(data|dataset|csv|table)\\b"
+    - "\\b(find|identify|discover)\\b.*\\b(pattern|trend|anomaly|outlier)\\b"
+    - "\\b(statistical|stats)\\b.*\\b(summary|analysis|test)\\b"
+    - "\\b(data)\\b.*\\b(insight|finding|conclusion)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a senior data analyst with expertise in exploratory data analysis,
+  statistical methods, and translating data findings into business insights.
+
+  ## Analysis Framework
+  1. **Data Understanding**
+     - Schema and data types
+     - Missing values and data quality
+     - Basic statistics (count, mean, std, min, max)
+
+  2. **Univariate Analysis**
+     - Distribution of each variable
+     - Outlier detection
+     - Central tendency and spread
+
+  3. **Bivariate/Multivariate Analysis**
+     - Correlations between variables
+     - Cross-tabulations for categorical data
+     - Scatter plots and relationships
+
+  4. **Pattern Detection**
+     - Trends over time
+     - Seasonality
+     - Clusters and segments
+
+  5. **Insights Generation**
+     - Key findings (data-backed)
+     - Business implications
+     - Recommendations for action
+     - Areas for further investigation
+
+  ## Output Standards
+  - Always cite specific numbers and statistics
+  - Distinguish between correlation and causation
+  - Acknowledge limitations and data quality issues
+  - Provide confidence levels where applicable
+  - Suggest visualizations for key findings
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # Data Analysis Report: {{dataset_name}}
+
+  **Analysis Date:** {{date}}
+  **Analyst:** Panpsychism Data Agent
+  **Data Period:** {{data_period}}
+
+  ---
+
+  ## Executive Summary
+
+  {{executive_summary}}
+
+  ## 1. Data Overview
+
+  ### 1.1 Dataset Structure
+  - **Records:** {{record_count}}
+  - **Features:** {{feature_count}}
+  - **Time Range:** {{time_range}}
+
+  ### 1.2 Data Quality
+  | Metric | Value |
+  |--------|-------|
+  | Missing Values | {{missing_pct}}% |
+  | Duplicates | {{duplicate_count}} |
+  | Data Types | {{data_types_summary}} |
+
+  ## 2. Statistical Summary
+
+  {{statistical_summary_table}}
+
+  ## 3. Key Findings
+
+  ### Finding 1: {{finding_1_title}}
+  {{finding_1_detail}}
+
+  **Supporting Data:**
+  - {{evidence_1}}
+  - {{evidence_2}}
+
+  **Visualization:** {{viz_recommendation_1}}
+
+  ### Finding 2: {{finding_2_title}}
+  {{finding_2_detail}}
+
+  ## 4. Correlations & Relationships
+
+  {{correlation_analysis}}
+
+  ## 5. Anomalies & Outliers
+
+  {{anomaly_analysis}}
+
+  ## 6. Recommendations
+
+  1. {{recommendation_1}}
+  2. {{recommendation_2}}
+  3. {{recommendation_3}}
+
+  ## 7. Next Steps
+
+  - [ ] {{next_step_1}}
+  - [ ] {{next_step_2}}
+  - [ ] {{next_step_3}}
+
+  ## Appendix: Methodology
+
+  {{methodology_notes}}
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: data_description
+    type: string
+    required: true
+    description: "Description of the dataset or data to analyze"
+  - name: analysis_goals
+    type: array
+    default: [overview, patterns, insights]
+    description: "Specific goals for the analysis"
+  - name: output_format
+    type: enum
+    options: [report, summary, bullet-points, presentation]
+    default: report
+    description: "Format of the analysis output"
+  - name: include_code
+    type: boolean
+    default: true
+    description: "Include Python/SQL code for analysis steps"
+  - name: statistical_depth
+    type: enum
+    options: [basic, intermediate, advanced]
+    default: intermediate
+    description: "Level of statistical analysis detail"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: "Analyze this sales data: monthly revenue for 2025, by region and product category"
+    expected_output: |
+      # Data Analysis Report: 2025 Monthly Sales
+
+      **Analysis Date:** 2026-01-09
+      **Data Period:** January - December 2025
+
+      ---
+
+      ## Executive Summary
+
+      Analysis of 2025 sales data reveals strong regional disparities, with North America
+      contributing 45% of total revenue. Electronics category shows consistent growth (+12% YoY),
+      while Home & Garden peaked in Q2 (seasonal). Three key opportunities identified for 2026.
+
+      ## 1. Data Overview
+
+      ### 1.1 Dataset Structure
+      - **Records:** 1,440 (12 months x 4 regions x 30 product categories)
+      - **Features:** 8 (date, region, category, revenue, units, avg_price, returns, margin)
+      - **Time Range:** Jan 1, 2025 - Dec 31, 2025
+
+      ### 1.2 Data Quality
+      | Metric | Value |
+      |--------|-------|
+      | Missing Values | 0.3% (returns column) |
+      | Duplicates | 0 |
+      | Data Types | 2 datetime, 2 categorical, 4 numeric |
+
+      ## 2. Statistical Summary
+
+      | Metric | Revenue ($M) | Units (K) | Margin (%) |
+      |--------|-------------|-----------|------------|
+      | Total | 124.5 | 892 | 28.3 |
+      | Mean (monthly) | 10.4 | 74.3 | 28.3 |
+      | Std Dev | 2.1 | 15.2 | 4.2 |
+      | Max | 14.8 (Nov) | 102 (Nov) | 35.1 |
+      | Min | 7.2 (Feb) | 51 (Feb) | 21.4 |
+
+      ## 3. Key Findings
+
+      ### Finding 1: Regional Revenue Concentration
+      North America dominates with 45% of total revenue, followed by Europe (28%),
+      Asia Pacific (18%), and Latin America (9%).
+
+      **Supporting Data:**
+      - North America: $56.0M (45.0%)
+      - Europe: $34.9M (28.0%)
+      - APAC: $22.4M (18.0%)
+      - LATAM: $11.2M (9.0%)
+
+      **Visualization:** Stacked bar chart by region over time
+
+      ### Finding 2: Strong Holiday Season Effect
+      November-December accounts for 28% of annual revenue, with Electronics
+      leading the seasonal surge (+45% vs. monthly average).
+
+      ## 4. Correlations & Relationships
+
+      - Revenue strongly correlated with marketing spend (r=0.82)
+      - Unit price negatively correlated with volume (r=-0.45)
+      - Return rate varies significantly by category (1.2% - 8.5%)
+
+      ## 5. Recommendations
+
+      1. **Expand APAC presence** - Fastest growing region (+18% YoY)
+      2. **Optimize pricing in Electronics** - Price elasticity analysis suggests
+         5% price reduction could yield 12% volume increase
+      3. **Reduce returns in Home & Garden** - 8.5% return rate costs $2.1M annually
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.93
+  compatible_agents:
+    - data-analyst
+    - business-intelligence
+    - reporting-agent

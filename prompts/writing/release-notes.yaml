@@ -1,0 +1,325 @@
+# =============================================================================
+# RELEASE NOTES GENERATOR
+# =============================================================================
+# Generate professional release notes from git commits and changelogs
+# Version: 1.0.0 | Category: writing
+# =============================================================================
+
+id: release-notes-v1
+name: "Release Notes Generator"
+version: "1.0.0"
+category: writing
+tags: [release-notes, changelog, documentation, versioning, communication]
+
+description: |
+  Generates professional, user-friendly release notes from git commits,
+  pull requests, or raw changelog data. Supports multiple formats and
+  audiences (developers, end-users, stakeholders).
+
+# -----------------------------------------------------------------------------
+# DETECTION RULES
+# -----------------------------------------------------------------------------
+detection:
+  keywords:
+    - release notes
+    - changelog
+    - what's new
+    - version update
+    - release announcement
+    - upgrade guide
+    - breaking changes
+
+  patterns:
+    - "\\b(generate|write|create)\\b.*\\b(release|changelog|notes)\\b"
+    - "\\b(version|v\\d+)\\b.*\\b(update|release|announcement)\\b"
+    - "\\b(what's new|breaking change)\\b"
+
+  confidence_threshold: 0.7
+
+# -----------------------------------------------------------------------------
+# SYSTEM PROMPT
+# -----------------------------------------------------------------------------
+system_prompt: |
+  You are a technical writer specializing in release communications. You transform
+  raw commit logs and technical changes into clear, engaging release notes that
+  help users understand what's new and how it affects them.
+
+  ## Release Notes Structure
+
+  ### 1. Version Header
+  - Version number (SemVer)
+  - Release date
+  - Codename (optional)
+
+  ### 2. Highlights (Hero Section)
+  - 2-3 most important changes
+  - Written for non-technical readers
+  - Include visuals if applicable
+
+  ### 3. Breaking Changes (if any)
+  - Clearly marked with warning
+  - Migration path provided
+  - Before/after examples
+
+  ### 4. New Features
+  - Grouped by area/module
+  - User benefit focus
+  - Links to documentation
+
+  ### 5. Improvements
+  - Performance gains
+  - UX enhancements
+  - Developer experience
+
+  ### 6. Bug Fixes
+  - Issue references
+  - What was broken
+  - How it's fixed
+
+  ### 7. Deprecations
+  - What's deprecated
+  - Timeline for removal
+  - Alternatives
+
+  ### 8. Contributors
+  - Thank community contributors
+
+  ## Writing Guidelines
+  - Lead with user value, not technical implementation
+  - Use active voice ("Added" not "There has been added")
+  - Be specific about what changed
+  - Include ticket/PR numbers for traceability
+  - Avoid jargon in highlights section
+  - Use consistent formatting
+
+# -----------------------------------------------------------------------------
+# OUTPUT TEMPLATE
+# -----------------------------------------------------------------------------
+output_template: |
+  # {{product_name}} {{version}} Release Notes
+
+  **Release Date:** {{release_date}}
+  {{#if codename}}**Codename:** {{codename}}{{/if}}
+
+  ---
+
+  ## Highlights
+
+  {{highlights_description}}
+
+  {{#each highlights}}
+  ### {{icon}} {{title}}
+  {{description}}
+  {{/each}}
+
+  ---
+
+  {{#if breaking_changes}}
+  ## Breaking Changes
+
+  > **Warning:** This release contains breaking changes. Please review before upgrading.
+
+  {{#each breaking_changes}}
+  ### {{title}}
+
+  **What changed:** {{change_description}}
+
+  **Migration:**
+  ```{{language}}
+  // Before
+  {{before_code}}
+
+  // After
+  {{after_code}}
+  ```
+
+  {{/each}}
+  {{/if}}
+
+  ---
+
+  ## New Features
+
+  {{#each features}}
+  - **{{title}}** - {{description}} {{#if pr}}([#{{pr}}]({{pr_url}})){{/if}}
+  {{/each}}
+
+  ---
+
+  ## Improvements
+
+  {{#each improvements}}
+  - {{description}} {{#if pr}}([#{{pr}}]({{pr_url}})){{/if}}
+  {{/each}}
+
+  ---
+
+  ## Bug Fixes
+
+  {{#each bug_fixes}}
+  - {{description}} {{#if issue}}(fixes [#{{issue}}]({{issue_url}})){{/if}}
+  {{/each}}
+
+  ---
+
+  {{#if deprecations}}
+  ## Deprecations
+
+  {{#each deprecations}}
+  - **{{item}}** - {{reason}}. Use `{{alternative}}` instead. Will be removed in {{removal_version}}.
+  {{/each}}
+  {{/if}}
+
+  ---
+
+  ## Upgrade Guide
+
+  ```bash
+  {{upgrade_command}}
+  ```
+
+  {{upgrade_notes}}
+
+  ---
+
+  ## Contributors
+
+  Thank you to everyone who contributed to this release:
+
+  {{contributors_list}}
+
+  ---
+
+  **Full Changelog:** [{{previous_version}}...{{version}}]({{compare_url}})
+
+# -----------------------------------------------------------------------------
+# VARIABLES
+# -----------------------------------------------------------------------------
+variables:
+  - name: changes_input
+    type: string
+    required: true
+    description: "Raw input: git log, PR list, or changelog text"
+  - name: version
+    type: string
+    required: true
+    description: "Version number for this release"
+  - name: product_name
+    type: string
+    default: "Product"
+    description: "Name of the product/project"
+  - name: audience
+    type: enum
+    options: [developers, end-users, stakeholders, mixed]
+    default: mixed
+    description: "Primary audience for the notes"
+  - name: format
+    type: enum
+    options: [markdown, html, slack, email]
+    default: markdown
+    description: "Output format"
+  - name: include_contributors
+    type: boolean
+    default: true
+    description: "Include contributor acknowledgments"
+
+# -----------------------------------------------------------------------------
+# EXAMPLES
+# -----------------------------------------------------------------------------
+examples:
+  - input: |
+      Generate release notes for v2.5.0 from these commits:
+      - feat: Add dark mode support (#234)
+      - feat: Implement export to PDF (#245)
+      - fix: Resolve crash on large files (#251)
+      - fix: Memory leak in preview mode (#248)
+      - BREAKING: Changed auth API response format
+      - perf: 40% faster file loading
+      - chore: Update dependencies
+    expected_output: |
+      # Acme App v2.5.0 Release Notes
+
+      **Release Date:** January 9, 2026
+
+      ---
+
+      ## Highlights
+
+      This release brings highly requested dark mode, PDF export, and significant performance improvements.
+
+      ### Dark Mode
+      Finally here! Switch between light and dark themes in Settings > Appearance. Your preference syncs across devices.
+
+      ### PDF Export
+      Export your documents to PDF with one click. Supports custom headers, page numbers, and watermarks.
+
+      ### 40% Faster Loading
+      Large files now load significantly faster thanks to our new streaming parser.
+
+      ---
+
+      ## Breaking Changes
+
+      > **Warning:** This release contains breaking changes. Please review before upgrading.
+
+      ### Authentication API Response Format
+
+      **What changed:** The auth endpoint now returns a structured response object instead of a flat token string.
+
+      **Migration:**
+      ```javascript
+      // Before (v2.4.x)
+      const token = await auth.login(credentials);
+
+      // After (v2.5.0)
+      const { token, expiresAt, user } = await auth.login(credentials);
+      ```
+
+      ---
+
+      ## New Features
+
+      - **Dark Mode** - Toggle between light and dark themes ([#234](https://github.com/example/app/pull/234))
+      - **PDF Export** - Export documents to PDF format ([#245](https://github.com/example/app/pull/245))
+
+      ---
+
+      ## Improvements
+
+      - 40% faster file loading for large documents
+      - Updated all dependencies to latest versions
+
+      ---
+
+      ## Bug Fixes
+
+      - Fixed crash when opening files larger than 100MB (fixes [#251](https://github.com/example/app/issues/251))
+      - Resolved memory leak in document preview mode (fixes [#248](https://github.com/example/app/issues/248))
+
+      ---
+
+      ## Upgrade Guide
+
+      ```bash
+      npm install @acme/app@2.5.0
+      ```
+
+      **Important:** If you're using the auth API directly, update your code to handle the new response format before upgrading.
+
+      ---
+
+      **Full Changelog:** [v2.4.0...v2.5.0](https://github.com/example/app/compare/v2.4.0...v2.5.0)
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+metadata:
+  author: "panpsychism-team"
+  created_at: "2026-01-09"
+  updated_at: "2026-01-09"
+  license: MIT
+  quality_score: 0.91
+  compatible_agents:
+    - documentation-writer
+    - release-manager
+    - product-communication
