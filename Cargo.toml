@@ -34,7 +34,7 @@ pin-project-lite = "0.2"
 rustyline = "15"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
-lru = "0.12"
+lru = "0.16"
 smallvec = { version = "1.11", features = ["serde"] }
 rand = "0.8"
 
